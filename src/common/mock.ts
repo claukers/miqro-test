@@ -2,7 +2,7 @@ import { dirname, resolve } from "path";
 import { lstatSync } from "fs";
 import { getCallerFilePath } from "./common";
 
-export function mockRequire(requirePath: string, mocks: {
+export function requireMock(requirePath: string, mocks: {
 	[path: string]: any
 }) {
   const callerPath = getCallerFilePath();

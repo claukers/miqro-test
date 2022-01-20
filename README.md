@@ -19,10 +19,9 @@ const response = await TestHelper({
 })
 ```
 
-## mock require
+## require mock
 
-
-**lib.js**
+```lib.js```
 
 ```typescript
 module.exports.mock = () => {
@@ -30,28 +29,36 @@ module.exports.mock = () => {
 }
 ```
 
-**file.js**
+```file.js```
 
 ```typescript
 import { mock } from "./lib";
 
-mock();
+module.exports.someFunction = function someFunction(){  mock(); }
 ```
 
-```typescript
-import { mockRequire } from "@miqro/test";
+```file.test.js```
 
-mockRequire("./file.js", {
+```typescript
+import { requireMock } from "@miqro/test";
+
+const mockedFile = requireMock("./file.js", {
 	"./lib": {
 		mock: () => {
 			console.log("fake function")
 		}
 	}
-})
+});
+
+mockedFile.someFunction(); // prints "fake function"
+
+const notMockedFile = require("./file.js");
+
+notMockedFile.someFunction(); // prints "real function"
 ```
 
 
-## fake
+## fake function
 
 ```typescript
 import { fake } from "@miqro/test";

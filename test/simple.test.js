@@ -1,4 +1,4 @@
-const { TestHelper, it, mockRequire, fake } = require("../dist");
+const { TestHelper, it, requireMock, fake } = require("../dist");
 const { strictEqual } = require("assert");
 const { resolve } = require("path");
 
@@ -35,7 +35,7 @@ it("mock module test", async () => {
     console.log("v4 mock!");
   });
 
-  mockRequire("./mock-test1.js", {
+  requireMock("./mock-test1.js", {
     "./lib": {
       mock
     },
@@ -57,7 +57,7 @@ it("mock module test", async () => {
   strictEqual(mock2.callCount, 1);
   strictEqual(v4.callCount, 1);
   
-  mockRequire("./mock-test1.js", {
+  requireMock("./mock-test1.js", {
     "./lib": {
       mock
     }
