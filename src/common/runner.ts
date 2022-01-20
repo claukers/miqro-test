@@ -2,6 +2,7 @@ import { fork } from "child_process";
 import { Console } from "console";
 import { resolve as pathResolve } from "path";
 import { format } from "util";
+import { getCallerFilePath } from "./common";
 
 export type TestFunction = () => void | Promise<void>;
 type TestFunctionWrapper = (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => void | Promise<void>;
@@ -12,26 +13,26 @@ interface Test { run: TestFunctionWrapper; title: string; category?: string; ful
 
 const tests: Test[] = [];
 
-export const getTestCount = () => tests.length;
+export function getTestCount() { return tests.length };
 
-export const it = (title: string, impl: TestFunction, options?: {
+export function it(title: string, impl: TestFunction, options?: {
   category?: string;
   timeout?: number;
   before?: TestFunction;
   after?: TestFunction;
   isolate?: boolean;
+  mockRequire?: {
+    [path: string]: any
+  }
 }, logger: {
   log: (...args: any[]) => void
-} | Console = new Console(process.stdout)): void => {
+} | Console = new Console(process.stdout)): void {
   const category = options && options.category ? options.category : undefined;
   const fullName = `${category ? `${category} [` : ""}${title}${category ? "]" : ""}`;
   if (tests.filter(t => t.fullName === fullName).length > 0) {
     throw new Error("cannot redefine " + fullName);
   }
-  const err = new Error("");
-  const stack = err.stack as string;
-  const stackS = stack.split("\n")[2];
-  const testFilePath = stackS.substring(stackS.indexOf("(") + 1, stackS.indexOf(":"));
+  const testFilePath = getCallerFilePath();
   tests.push({
     testFilePath,
     run: (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => new Promise((resolve, reject) => {
@@ -102,7 +103,7 @@ export const it = (title: string, impl: TestFunction, options?: {
   });
 };
 
-export const runTests = async (title?: string | string[], logger: {
+export async function runTests(title?: string | string[], logger: {
   error: (...args: any[]) => void;
 } | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
   passed: number;
@@ -112,7 +113,7 @@ export const runTests = async (title?: string | string[], logger: {
     error: any;
     fullName: string;
   }[];
-}> => {
+}> {
   const titles = title ? title instanceof Array ? title : [title] : [undefined];
   const ret: {
     passed: number;
@@ -159,7 +160,7 @@ export const runTests = async (title?: string | string[], logger: {
   return ret;
 };
 
-export const runTestModules = async (modules: string[], title?: string | string[], logger: {
+export async function runTestModules(modules: string[], title?: string | string[], logger: {
   error: (...args: any[]) => void;
 } | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
   passed: number;
@@ -169,7 +170,7 @@ export const runTestModules = async (modules: string[], title?: string | string[
     error: any;
     fullName: string;
   }[];
-}> => {
+}> {
   for (const path of modules) {
     require(path);
   }

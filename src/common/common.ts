@@ -19,3 +19,11 @@ export const fake = (cb: Callback): FakeCallback => {
   ret.callArgs = [] as any;
   return ret;
 }
+
+export function getCallerFilePath(): string {
+  const err = new Error("");
+  const stack = err.stack as string;
+  const stackS = stack.split("\n")[3];
+  const testFilePath = stackS.substring(stackS.indexOf("(") + 1, stackS.indexOf(":")).split(" ").reverse()[0];
+  return testFilePath;
+}

@@ -1,5 +1,6 @@
-const { TestHelper, it } = require("../dist");
+const { TestHelper, it, mockRequire, fake } = require("../dist");
 const { strictEqual } = require("assert");
+const { resolve } = require("path");
 
 it("empty test", async () => {
    console.log(process.pid);
@@ -20,6 +21,49 @@ it("empty test", async () => {
    strictEqual(response.data, "world!");
 });
 
-it("empty test2", async () => {
+it("mock module test", async () => {
   console.log(process.pid); 
+  const mock = fake(()=>{
+    console.log("mock!");
+  });
+
+  const mock2 = fake(()=>{
+    console.log("mock2!");
+  });
+
+  const v4 = fake(()=>{
+    console.log("v4 mock!");
+  });
+
+  mockRequire("./mock-test1.js", {
+    "./lib": {
+      mock
+    },
+    "./mockdir": {
+      mock2
+    },
+    "uuid": {
+      v4
+    }
+  });
+
+  strictEqual(mock.callCount, 1);
+  strictEqual(mock2.callCount, 1);
+  strictEqual(v4.callCount, 1);
+
+  require("./mock-test1");
+
+  strictEqual(mock.callCount, 1);
+  strictEqual(mock2.callCount, 1);
+  strictEqual(v4.callCount, 1);
+  
+  mockRequire("./mock-test1.js", {
+    "./lib": {
+      mock
+    }
+  });
+
+  strictEqual(mock.callCount, 2);
+  strictEqual(mock2.callCount, 1);
+  strictEqual(v4.callCount, 1);
 });
