@@ -6,9 +6,9 @@ import { createServer, RequestListener } from "http";
 import { v4 } from "uuid";
 export * from "./common";
 
-export const TestHelper = async (app: {
+export async function TestHelper(app: {
   listener: RequestListener;
-} | RequestListener, options: RequestOptions, cb?: (response: RequestResponse) => void): Promise<RequestResponse> => {
+} | RequestListener, options: RequestOptions, cb?: (response: RequestResponse) => void): Promise<RequestResponse> {
   const unixSocket = `/tmp/socket.test.helper${v4()}`;
   if (existsSync(unixSocket)) {
     unlinkSync(unixSocket);
