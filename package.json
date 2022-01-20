@@ -1,0 +1,29 @@
+{
+  "name": "@miqro/test",
+  "version": "1.0.0",
+  "description": "",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "bin": {
+    "@miqro/test": "dist/cli.js",
+    "miqro-test": "dist/cli.js"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "prebuild": "rm -Rf dist/;",
+    "build": "tsc",
+    "pretest": "npm run build",
+    "test": "node dist/cli.js test/*.test.js -n"
+  },
+  "author": "claukers",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.8",
+    "@types/uuid": "^8.3.4",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@miqro/request": "^0.0.2",
+    "uuid": "^8.3.2"
+  }
+}
