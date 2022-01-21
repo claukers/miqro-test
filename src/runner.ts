@@ -46,9 +46,8 @@ export function it(title: string, impl: TestFunction, options?: {
           // console.log("isolate mode");
           // isolate mode
           // fork -n title
-          const forkFilename = pathResolve(__dirname, "..", "cli");
+          const forkFilename = pathResolve(__dirname, "cli");
           const execArgv = [forkFilename, testFilePath, "-n", fullName, "--exact", "--disable-isolate", "--disable-logging"];
-          // console.log(execArgv);
           const startMS = Date.now();
           const cp = fork("", {
             cwd: process.cwd(),
