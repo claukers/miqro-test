@@ -1,4 +1,4 @@
-const { it, fake, requireMock } = require("../dist/common");
+const { it, fake, requireMock } = require("../dist");
 const { strictEqual } = require("assert");
 
 const options = {
@@ -25,7 +25,7 @@ it("happy path", async () => {
 		listen: fakeListen,
 		close: fakeClose
 	}
-	const { TestHelper } = requireMock("../dist/index.js", {
+	const { TestHelper } = requireMock("../dist/http.js", {
 		["@miqro/request"]: {
 			request: async (args) => {
 				strictEqual(fakeListen.callCount, 1);

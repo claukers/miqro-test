@@ -2,7 +2,7 @@
 //@miqro/test
 
 import { resolve } from "path";
-import { runTestModules } from "./common";
+import { runTestModules } from "./runner";
 
 const extractFlags = (args: string[], options?: {
   flags: {
