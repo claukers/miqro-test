@@ -84,7 +84,7 @@ export function it(title: string, impl: TestFunction, options?: {
           })().then((took) => {
             clearTimeout(timeout);
             if (!disableLogging) {
-              logger.log("\x1b[32mpassed %s (took %sms)\x1b[0m", fullName, took);
+              logger.log("\x1b[32m%s passed (took %sms)\x1b[0m", fullName, took);
             }
             resolve();
           }).catch(e => {
