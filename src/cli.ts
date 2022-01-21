@@ -108,7 +108,7 @@ const main = async (): Promise<void> => {
 
     logger.log("");
     logger.log("");
-    logger.log(ret.passed + " tests pased");
+    logger.log(ret.passed + " tests passed");
     logger.log(ret.failed.length + " failed");
     logger.log("took " + took + "ms");
     logger.log("");
