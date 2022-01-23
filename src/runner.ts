@@ -2,7 +2,8 @@ import { fork } from "child_process";
 import { Console } from "console";
 import { resolve as pathResolve } from "path";
 import { format } from "util";
-import { getCallerFilePath } from "./common";
+import { TestHelper } from "./http";
+import { getCallerFilePath, requireMock, fake } from "./common";
 
 export type TestFunction = () => void | Promise<void>;
 type TestFunctionWrapper = (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => void | Promise<void>;
@@ -171,6 +172,10 @@ export async function runTestModules(modules: string[], title?: string | string[
   }[];
 }> {
   for (const path of modules) {
+    (global as any).it = it;
+    (global as any).requireMock = requireMock;
+    (global as any).fake = fake;
+    (global as any).TestHelper = TestHelper;
     require(path);
   }
   return await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);

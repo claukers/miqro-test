@@ -1,4 +1,3 @@
-const { it, fake, requireMock } = require("../dist");
 const { strictEqual } = require("assert");
 
 const options = {
