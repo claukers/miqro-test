@@ -1,3 +1,4 @@
+const { TestHelper, requireMock, fake } = require("../dist");
 const { strictEqual } = require("assert");
 const { resolve } = require("path");
 

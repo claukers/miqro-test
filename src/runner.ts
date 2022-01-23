@@ -173,9 +173,6 @@ export async function runTestModules(modules: string[], title?: string | string[
 }> {
   for (const path of modules) {
     (global as any).it = it;
-    (global as any).requireMock = requireMock;
-    (global as any).fake = fake;
-    (global as any).TestHelper = TestHelper;
     require(path);
   }
   return await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);
