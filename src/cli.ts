@@ -2,7 +2,26 @@
 //@miqro/test
 
 import { resolve } from "path";
+import { lstatSync, readdirSync } from "fs";
 import { runTestModules } from "./runner";
+
+function getModulesRecursive(path: string[] | string, ret: string[] = [], first = false) {
+  const paths = path instanceof Array ? path : [path];
+  for(const path of paths) {
+    const files = readdirSync(path);
+    for(const file of files) {
+      if (lstatSync(resolve(path, file)).isDirectory()) {
+        getModulesRecursive(resolve(path, file), ret);
+      } else {
+        const split = file.split(".").reverse();
+        if(split.length >= 3 && split[0] === "js" && split[1] === "test") {
+          ret.push(resolve(path, file));
+        }
+      }
+    }
+  }
+  return ret;
+}
 
 const extractFlags = (args: string[], options?: {
   flags: {
@@ -69,17 +88,25 @@ const main = async (): Promise<void> => {
       ["disable-isolate"]: {
         description: "disable isolation",
         hasValue: false
+      },
+      r: {
+        description: "recursive. cannot be used with files",
+        hasValue: true
       }
     }
   });
 
   // console.dir(args);
 
-  if (args.files.length === 0) {
+  const recursive: string[] | false = args.flags.r !== undefined && args.flags.r !== null ? (args.flags.r instanceof Array ? args.flags.r : [args.flags.r]) as string[] : false;
+
+  if (args.files.length === 0 && !recursive) {
     throw new Error(`bad arguments`);
+  } else if(recursive && args.files.length > 0) {
+    throw new Error(`cannot use recursive with files`);
   }
 
-  const modules = args.files.map(m => resolve(process.cwd(), m));
+  const modules = recursive ? getModulesRecursive(recursive.map(r=>resolve(process.cwd(), r))) : args.files.map(m => resolve(process.cwd(), m));
 
   const name = args.flags.n ? args.flags.n as string[] : "all";
   const exact = args.flags.exact !== undefined ? true : false;
