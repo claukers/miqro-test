@@ -1,5 +1,5 @@
-import { dirname, resolve } from "path";
-import { lstatSync } from "fs";
+import {dirname, resolve} from "path";
+import {lstatSync} from "fs";
 
 export type Callback<T = any> = (...args: any[]) => T;
 
@@ -27,8 +27,7 @@ export function getCallerFilePath(): string {
   const err = new Error("");
   const stack = err.stack as string;
   const stackS = stack.split("\n")[3];
-  const testFilePath = stackS.substring(stackS.indexOf("(") + 1, stackS.indexOf(":")).split(" ").reverse()[0];
-  return testFilePath;
+  return stackS.substring(stackS.indexOf("(") + 1, stackS.indexOf(":")).split(" ").reverse()[0];
 }
 
 export function requireMock(requirePath: string, mocks: {
@@ -42,26 +41,26 @@ export function requireMock(requirePath: string, mocks: {
 
   const mocksPaths = Object.keys(mocks);
   const resolvedPaths = [];
-  for(const path of mocksPaths) {
+  for (const path of mocksPaths) {
     const paths = (require.resolve.paths(resolvedRequirePath) as string[]).concat(newPath);
     const resolvedPath = require.resolve(path, {
       paths
     });
     require.cache[resolvedPath] = {
-        id: resolvedPath,
-        file: resolvedPath,
-        loaded: true,
-        exports: mocks[path]
-      } as any;
+      id: resolvedPath,
+      file: resolvedPath,
+      loaded: true,
+      exports: mocks[path]
+    } as any;
     resolvedPaths.push(resolvedPath);
   }
   const mod = require(resolvedRequirePath);
 
-  for(const path of resolvedPaths) {
+  for (const path of resolvedPaths) {
     delete require.cache[path];
   }
 
   delete require.cache[resolvedRequirePath];
 
   return mod;
-};
+}

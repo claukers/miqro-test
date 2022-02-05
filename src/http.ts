@@ -1,8 +1,8 @@
-import { request, RequestOptions, RequestResponse } from "@miqro/request";
+import {request, RequestOptions, RequestResponse} from "@miqro/request";
 
-import { existsSync, unlinkSync } from "fs";
-import { createServer, RequestListener } from "http";
-import { v4 } from "uuid";
+import {existsSync, unlinkSync} from "fs";
+import {createServer, RequestListener} from "http";
+import {v4} from "uuid";
 
 export async function TestHelper(app: {
   listener: RequestListener;

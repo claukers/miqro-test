@@ -24,7 +24,7 @@ const response = await TestHelper({
 ```lib.js```
 
 ```typescript
-module.exports.mock = () => {
+module.exports.libFN = () => {
 	console.log("real function");
 }
 ```
@@ -32,9 +32,9 @@ module.exports.mock = () => {
 ```file.js```
 
 ```typescript
-import { mock } from "./lib";
+import { libFN } from "./lib";
 
-module.exports.someFunction = function someFunction(){  mock(); }
+module.exports.someFunction = function someFunction(){  libFN(); }
 ```
 
 ```file.test.js```
@@ -44,7 +44,7 @@ import { requireMock } from "@miqro/test";
 
 const mockedFile = requireMock("./file.js", {
 	"./lib": {
-		mock: () => {
+		libFN: () => {
 			console.log("fake function")
 		}
 	}

@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 //@miqro/test
 
-import { resolve } from "path";
-import { lstatSync, readdirSync } from "fs";
-import { runTestModules } from "./runner";
+import {resolve} from "path";
+import {lstatSync, readdirSync} from "fs";
+import {runTestModules} from "./runner";
 
-function getModulesRecursive(path: string[] | string, ret: string[] = [], first = false) {
+function getModulesRecursive(path: string[] | string, ret: string[] = []) {
   const paths = path instanceof Array ? path : [path];
-  for(const path of paths) {
+  for (const path of paths) {
     const files = readdirSync(path);
-    for(const file of files) {
+    for (const file of files) {
       if (lstatSync(resolve(path, file)).isDirectory()) {
         getModulesRecursive(resolve(path, file), ret);
       } else {
         const split = file.split(".").reverse();
-        if(split.length >= 3 && split[0] === "js" && split[1] === "test") {
+        if (split.length >= 3 && split[0] === "js" && split[1] === "test") {
           ret.push(resolve(path, file));
         }
       }
@@ -37,7 +37,7 @@ const extractFlags = (args: string[], options?: {
     const arg = args[i];
     if (arg.indexOf("-") === 0) {
       const argName = arg.substring(arg.indexOf("--") === 0 ? 2 : 1);
-      const ignoreValue = options && options.flags && options.flags[argName] && options.flags[argName].hasValue === false ? true : false; 
+      const ignoreValue = options && options.flags && options.flags[argName] && options.flags[argName].hasValue === false ? true : false;
       const argValue = !ignoreValue && args.length > i + 1 && args[i + 1] && args[i + 1].indexOf("-") != 0 ? args[i + 1] : null;
       const flag = flags[argName];
       if (flag instanceof Array) {
@@ -54,7 +54,7 @@ const extractFlags = (args: string[], options?: {
       files.push(arg);
     }
   }
-  return { flags, files };
+  return {flags, files};
 }
 
 const logger = console;
@@ -102,11 +102,11 @@ const main = async (): Promise<void> => {
 
   if (args.files.length === 0 && !recursive) {
     throw new Error(`bad arguments`);
-  } else if(recursive && args.files.length > 0) {
+  } else if (recursive && args.files.length > 0) {
     throw new Error(`cannot use recursive with files`);
   }
 
-  const modules = recursive ? getModulesRecursive(recursive.map(r=>resolve(process.cwd(), r))) : args.files.map(m => resolve(process.cwd(), m));
+  const modules = recursive ? getModulesRecursive(recursive.map(r => resolve(process.cwd(), r))) : args.files.map(m => resolve(process.cwd(), m));
 
   const name = args.flags.n ? args.flags.n as string[] : "all";
   const exact = args.flags.exact !== undefined ? true : false;

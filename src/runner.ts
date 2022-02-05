@@ -1,20 +1,23 @@
-import { fork } from "child_process";
-import { Console } from "console";
-import { resolve as pathResolve } from "path";
-import { format } from "util";
-import { TestHelper } from "./http";
-import { getCallerFilePath, requireMock, fake } from "./common";
+import {fork} from "child_process";
+import {Console} from "console";
+import {resolve as pathResolve} from "path";
+import {format} from "util";
+import {getCallerFilePath} from "./common";
 
 export type TestFunction = () => void | Promise<void>;
 type TestFunctionWrapper = (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => void | Promise<void>;
 
 const DEFAULT_TIMEOUT = 2000;
 
-interface Test { run: TestFunctionWrapper; title: string; category?: string; fullName: string; testFilePath: string; }
+interface Test {
+  run: TestFunctionWrapper;
+  title: string;
+  category?: string;
+  fullName: string;
+  testFilePath: string;
+}
 
 const tests: Test[] = [];
-
-export function getTestCount() { return tests.length };
 
 export function it(title: string, impl: TestFunction, options?: {
   category?: string;
@@ -101,7 +104,7 @@ export function it(title: string, impl: TestFunction, options?: {
     category,
     fullName
   });
-};
+}
 
 export async function runTests(title?: string | string[], logger: {
   error: (...args: any[]) => void;
@@ -158,7 +161,7 @@ export async function runTests(title?: string | string[], logger: {
     }
   }
   return ret;
-};
+}
 
 export async function runTestModules(modules: string[], title?: string | string[], logger: {
   error: (...args: any[]) => void;
