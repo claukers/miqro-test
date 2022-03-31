@@ -7,6 +7,7 @@ export interface FakeCallback<T = any> extends Callback<T> {
   callCount: number;
   callArgs: T[];
   returnValues: any[];
+  reset: () => void;
 }
 
 export function fake(cb: Callback): FakeCallback {
@@ -20,6 +21,11 @@ export function fake(cb: Callback): FakeCallback {
   ret.callCount = 0;
   ret.returnValues = [];
   ret.callArgs = [] as any;
+  ret.reset = () => {
+    ret.callArgs = [];
+    ret.returnValues = [];
+    ret.callCount = 0;
+  };
   return ret;
 }
 
@@ -30,10 +36,22 @@ export function getCallerFilePath(): string {
   return stackS.substring(stackS.indexOf("(") + 1, stackS.indexOf(":")).split(" ").reverse()[0];
 }
 
+export function clearRequireCache(path: string): void {
+  const cacheKeys = Object.keys(require.cache);
+  for (const cacheKey of cacheKeys) {
+    if (cacheKey.indexOf(path) === 0) {
+      delete require.cache[cacheKey];
+    }
+  }
+}
+
 export function requireMock(requirePath: string, mocks: {
   [path: string]: any
-}) {
+}, cacheWipePath?: string) {
   const callerPath = getCallerFilePath();
+  if (cacheWipePath) {
+    clearRequireCache(resolve(dirname(callerPath), cacheWipePath));
+  }
   const resolvedRequirePath = resolve(dirname(callerPath), requirePath);
   delete require.cache[resolvedRequirePath];
 
