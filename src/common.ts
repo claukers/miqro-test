@@ -7,22 +7,32 @@ export interface FakeCallback<T = any> extends Callback<T> {
   callCount: number;
   callArgs: T[];
   returnValues: any[];
+  throws: any[];
   reset: () => void;
 }
 
 export function fake(cb: Callback): FakeCallback {
   const ret: FakeCallback = (...args: any[]) => {
-    ret.callCount++;
     ret.callArgs.push(args);
-    const r = cb(...args);
-    ret.returnValues.push(r);
-    return r;
+    ret.callCount++;
+    try {
+      const r = cb(...args);
+      ret.returnValues.push(r);
+      ret.throws.push(undefined);
+      return r;
+    } catch (e) {
+      ret.returnValues.push(undefined);
+      ret.throws.push(e);
+      throw e;
+    }
   };
   ret.callCount = 0;
   ret.returnValues = [];
+  ret.throws = [];
   ret.callArgs = [] as any;
   ret.reset = () => {
     ret.callArgs = [];
+    ret.throws = [];
     ret.returnValues = [];
     ret.callCount = 0;
   };
