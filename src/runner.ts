@@ -4,7 +4,26 @@ import {resolve as pathResolve} from "path";
 import {format} from "util";
 import {getCallerFilePath} from "./common";
 
-export type TestFunction = () => void | Promise<void>;
+export async function runTestModules(modules: string[], title?: string | string[], logger: {
+  error: (...args: any[]) => void;
+} | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
+  passed: number;
+  total: number;
+  ignored: number;
+  failed: {
+    error: any;
+    fullName: string;
+  }[];
+}> {
+  // @ts-ignore
+  globalThis.it = it;
+  for (const path of modules) {
+    require(path);
+  }
+  return await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);
+}
+
+type TestFunction = () => void | Promise<void>;
 type TestFunctionWrapper = (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => void | Promise<void>;
 
 const DEFAULT_TIMEOUT = 2000;
@@ -19,7 +38,7 @@ interface Test {
 
 const tests: Test[] = [];
 
-export function it(title: string, impl: TestFunction, options?: {
+function it(title: string, impl: TestFunction, options?: {
   category?: string;
   timeout?: number;
   before?: TestFunction;
@@ -106,7 +125,7 @@ export function it(title: string, impl: TestFunction, options?: {
   });
 }
 
-export async function runTests(title?: string | string[], logger: {
+async function runTests(title?: string | string[], logger: {
   error: (...args: any[]) => void;
 } | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
   passed: number;
@@ -137,11 +156,6 @@ export async function runTests(title?: string | string[], logger: {
 
       if ((!exact && (title && test.fullName.indexOf(title) !== -1 || !title)) || (exact && title && title === test.fullName)) {
         try {
-          /*console.log("**");
-          console.log(disableIsolate);
-          console.log(exact);
-          console.log(test.testFilePath);
-          console.log(test.fullName);*/
           await test.run(disableIsolate, disableLogging, isolateDefault);
           ret.passed++;
         } catch (e) {
@@ -151,7 +165,6 @@ export async function runTests(title?: string | string[], logger: {
             fullName: test.fullName
           })
         }
-        //console.log("**");
         if (exact) {
           return ret;
         }
@@ -161,23 +174,5 @@ export async function runTests(title?: string | string[], logger: {
     }
   }
   return ret;
-}
-
-export async function runTestModules(modules: string[], title?: string | string[], logger: {
-  error: (...args: any[]) => void;
-} | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
-  passed: number;
-  total: number;
-  ignored: number;
-  failed: {
-    error: any;
-    fullName: string;
-  }[];
-}> {
-  for (const path of modules) {
-    (global as any).it = it;
-    require(path);
-  }
-  return await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);
 }
 
