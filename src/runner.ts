@@ -4,6 +4,14 @@ import {resolve as pathResolve} from "path";
 import {format} from "util";
 import {getCallerFilePath} from "./common.js";
 
+let runningTests = false;
+
+function assertNotRunning() {
+  if (runningTests) {
+    throw new Error("test already started!");
+  }
+}
+
 export async function runTestModules(modules: string[], title?: string | string[], logger: {
   error: (...args: any[]) => void;
 } | Console = new Console(process.stdout), exact = false, disableIsolate = false, disableLogging = false, isolateDefault = false): Promise<{
@@ -15,16 +23,27 @@ export async function runTestModules(modules: string[], title?: string | string[
     fullName: string;
   }[];
 }> {
-  // @ts-ignore
-  globalThis.it = it;
+  assertNotRunning();
   for (const path of modules) {
+    resetGlobals();
     require(path);
   }
-  return await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);
+  runningTests = true;
+  const ret = await runTests(title, logger, exact, disableIsolate, disableLogging, isolateDefault);
+  runningTests = false;
+  return ret;
 }
 
 type TestFunction = () => void | Promise<void>;
 type TestFunctionWrapper = (disableIsolate: boolean, disableLogging: boolean, isolateDefault: boolean) => void | Promise<void>;
+
+interface TestOption {
+  category?: string;
+  timeout?: number;
+  before?: TestFunction;
+  after?: TestFunction;
+  isolate?: boolean;
+}
 
 const DEFAULT_TIMEOUT = 2000;
 
@@ -38,18 +57,87 @@ interface Test {
 
 const tests: Test[] = [];
 
-function it(title: string, impl: TestFunction, options?: {
-  category?: string;
-  timeout?: number;
-  before?: TestFunction;
-  after?: TestFunction;
-  isolate?: boolean;
-  mockRequire?: {
-    [path: string]: any
-  }
-}, logger: {
+function resetGlobals(baseTestOptions: TestOption = {}): void {
+  // @ts-ignore
+  globalThis.it = it;
+  // @ts-ignore
+  globalThis.setIsolate = setIsolate;
+  // @ts-ignore
+  globalThis.setTestTimeout = setTestTimeout;
+  // @ts-ignore
+  globalThis.before = before;
+  // @ts-ignore
+  globalThis.after = after;
+  // @ts-ignore
+  globalThis.describe = describe;
+  // @ts-ignore
+  delete globalThis.testOptions;
+  // @ts-ignore
+  globalThis.testOptions = baseTestOptions;
+}
+
+function getGlobalTestOptions(): TestOption {
+  // @ts-ignore
+  return globalThis.testOptions as TestOption;
+}
+
+function before(before: TestFunction) {
+  assertNotRunning();
+  const current = {...getGlobalTestOptions()};
+  // @ts-ignore
+  globalThis.testOptions = {
+    ...current,
+    before
+  } as TestOption;
+}
+
+function setIsolate(isolate: boolean) {
+  assertNotRunning();
+  const current = {...getGlobalTestOptions()};
+  // @ts-ignore
+  globalThis.testOptions = {
+    ...current,
+    isolate
+  } as TestOption;
+}
+
+function setTestTimeout(timeout: number) {
+  assertNotRunning();
+  const current = {...getGlobalTestOptions()};
+  // @ts-ignore
+  globalThis.testOptions = {
+    ...current,
+    timeout
+  } as TestOption;
+}
+
+function after(after: TestFunction) {
+  assertNotRunning();
+  const current = {...getGlobalTestOptions()};
+  // @ts-ignore
+  globalThis.testOptions = {
+    ...current,
+    after
+  } as TestOption;
+}
+
+function describe(title: string, impl: () => void) {
+  assertNotRunning();
+  const current = {...getGlobalTestOptions()};
+  // @ts-ignore
+  globalThis.testOptions = {
+    ...current,
+    category: current.category ? current.category + " " + title : title
+  } as TestOption;
+  impl();
+  resetGlobals(current);
+}
+
+function it(title: string, impl: TestFunction, options?: TestOption, logger: {
   log: (...args: any[]) => void
 } | Console = new Console(process.stdout)): void {
+  assertNotRunning();
+  options = options ? {...getGlobalTestOptions(), ...options} : {...getGlobalTestOptions()};
   const category = options && options.category ? options.category : undefined;
   const fullName = `${category ? `${category} [` : ""}${title}${category ? "]" : ""}`;
   if (tests.filter(t => t.fullName === fullName).length > 0) {
