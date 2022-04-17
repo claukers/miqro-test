@@ -1,2 +1,2 @@
-export {fake, requireMock, FakeCallback, clearRequireCache} from "./common";
-export * from "./http";
+export {fake, requireMock, FakeCallback, clearRequireCache} from "./common.js";
+export {TestHelper} from "./http.js";

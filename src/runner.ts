@@ -2,7 +2,7 @@ import {fork} from "child_process";
 import {Console} from "console";
 import {resolve as pathResolve} from "path";
 import {format} from "util";
-import {getCallerFilePath} from "./common";
+import {getCallerFilePath} from "./common.js";
 
 export async function runTestModules(modules: string[], title?: string | string[], logger: {
   error: (...args: any[]) => void;
