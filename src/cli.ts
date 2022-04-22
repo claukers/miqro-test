@@ -4,7 +4,7 @@
 
 import {resolve} from "path";
 import {lstatSync, readdirSync} from "fs";
-import {runTestModules} from "./runner/index";
+import {runTestModules} from "./runner";
 
 function getModulesRecursive(path: string[] | string, ret: string[] = []) {
   const paths = path instanceof Array ? path : [path];
