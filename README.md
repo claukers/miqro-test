@@ -19,16 +19,24 @@ const response = await TestHelper({
 })
 ```
 
-## require mock
-
-### clearRequireCache
+## fake function
 
 ```typescript
-import {clearRequireCache} from "@miqro/test";
-import {resolve} from "path";
+import {fake} from "@miqro/test";
 
-clearRequireCache(resolve(__dirname, "src/"));
+const cb = fake(() => {
+  return 1;
+})
+
+strictEqual(cb(), 1);
+strictEqual(cb.callCount, 1);
+strictEqual(cb.callArgs[0].length, 0);
+strictEqual(cb.returnValues[0], 1);
+
+// cb.reset(); // resets callCount, callArgs and returnValues
 ```
+
+## require mock
 
 ### example
 
@@ -70,19 +78,11 @@ const notMockedFile = require("./file.js");
 notMockedFile.someFunction(); // prints "real function"
 ```
 
-## fake function
+## clearRequireCache
 
 ```typescript
-import {fake} from "@miqro/test";
+import {clearRequireCache} from "@miqro/test";
+import {resolve} from "path";
 
-const cb = fake(() => {
-  return 1;
-})
-
-strictEqual(cb(), 1);
-strictEqual(cb.callCount, 1);
-strictEqual(cb.callArgs[0].length, 0);
-strictEqual(cb.returnValues[0], 1);
-
-// cb.reset(); // resets callCount, callArgs and returnValues
+clearRequireCache(resolve(__dirname, "src/"));
 ```

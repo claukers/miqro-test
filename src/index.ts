@@ -6,17 +6,22 @@ import {
   SetIsolateFunction,
   SetTestTimeoutFunction
 } from "./runner/types";
+import {resolve} from "path";
 
 export {fake, requireMock, FakeCallback, clearRequireCache} from "./common.js";
 export {TestHelper} from "./http.js";
 
 function getGlobal<T>(name: string): T {
-  const global = (globalThis as any)[name];
-  if (global === undefined) {
-    throw new Error(`${name} not defined`);
-  }
-  return global as T;
+  return ((...args: any[]) => {
+    const global = (globalThis as any)[name];
+    if (global === undefined) {
+      throw new Error(`${name} not defined`);
+    }
+    global(...args);
+  }) as unknown as T;
 }
+
+export const mainPath = (): string => resolve(__dirname, "cli.js");
 
 export const it: ItFunction = getGlobal<ItFunction>("it");
 export const describe: DescribeFunction = getGlobal<DescribeFunction>("describe");

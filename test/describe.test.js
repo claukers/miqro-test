@@ -1,5 +1,5 @@
 const {strictEqual} = require("assert");
-const {fake} = require("../dist");
+const {fake, describe, it, after} = require("../dist");
 
 const beforeDescribe1 = fake(() => {
   console.log("before describe1");

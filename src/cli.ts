@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 //@miqro/test
 
 import {resolve} from "path";
