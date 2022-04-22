@@ -1,6 +1,5 @@
 const { TestHelper, requireMock, fake } = require("../dist");
 const { strictEqual } = require("assert");
-const { resolve } = require("path");
 
 it("empty test", async () => {
    console.log(process.pid);
@@ -29,10 +28,6 @@ it("mock module test", async () => {
 
   const mock2 = fake(()=>{
     console.log("mock2!");
-  });
-
-  const v4 = fake(()=>{
-    console.log("v4 mock!");
   });
 
   requireMock("./mock-test1.js", {
