@@ -10,10 +10,9 @@ it("happy path", async () => {
 		bad: "bad bad"
 	};
 	const badListener = "some bad value2";
-	const fakeUUID = "some bad uuid";
 	const fakeResponse = "some bad response";
 	const fakeListen = fake((unixSocket, cb) => {
-		strictEqual(unixSocket, `/tmp/socket.test.helper${fakeUUID}`);
+		strictEqual(unixSocket, `/tmp/socket.test.helper`);
 		strictEqual(fakeClose.callCount, 0);
 		cb();
 	});
@@ -32,7 +31,7 @@ it("happy path", async () => {
 				strictEqual(fakeClose.callCount, 0);
 				strictEqual(args.bad, badArgs.bad);
 				strictEqual(args.disableThrow, true);
-				strictEqual(args.socketPath, `/tmp/socket.test.helper${fakeUUID}`);
+				strictEqual(args.socketPath, `/tmp/socket.test.helper`);
 				return fakeResponse;
 			}
 		},
@@ -42,13 +41,6 @@ it("happy path", async () => {
 				strictEqual(fakeClose.callCount, 0);
 				strictEqual(args, badListener);
 				return fakeServer;
-			}
-		},
-		uuid: {
-			v4: () => {
-				strictEqual(fakeListen.callCount, 0);
-				strictEqual(fakeClose.callCount, 0);
-				return fakeUUID;
 			}
 		}
 	});

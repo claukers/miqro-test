@@ -41,21 +41,16 @@ it("mock module test", async () => {
     },
     "./mockdir": {
       mock2
-    },
-    "uuid": {
-      v4
     }
   });
 
   strictEqual(mock.callCount, 1);
   strictEqual(mock2.callCount, 1);
-  strictEqual(v4.callCount, 1);
 
   require("./mock-test1");
 
   strictEqual(mock.callCount, 1);
   strictEqual(mock2.callCount, 1);
-  strictEqual(v4.callCount, 1);
   
   requireMock("./mock-test1.js", {
     "./lib": {
@@ -65,5 +60,4 @@ it("mock module test", async () => {
 
   strictEqual(mock.callCount, 2);
   strictEqual(mock2.callCount, 1);
-  strictEqual(v4.callCount, 1);
 });
