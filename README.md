@@ -1,5 +1,7 @@
 # @miqro/test
 
+```npm install @miqro/test --save-dev```
+
 ## test helper for RequestListener
 
 ```typescript
@@ -86,3 +88,23 @@ import {resolve} from "path";
 
 clearRequireCache(resolve(__dirname, "src/"));
 ```
+
+## test runner
+
+```npm install miqro --save-dev```
+
+recursive run ```*.test.js``` files
+
+```npx miqro test -r test/```
+
+run test files
+
+```npx miqro test test/*.test.js```
+
+run test isolated into its own node process
+
+```npx miqro test test/*.test.js -i```
+
+run test named tests
+
+```npx miqro test test/*.test.js -n "testname"```
