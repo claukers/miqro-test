@@ -72,20 +72,45 @@ strictEqual(cb.returnValues[0], 1);
 
 ## test runner
 
-```npm install miqro --save-dev```
+```npm install @miqro/test --save-dev```
+
+```example.test.js```
+
+```typescript
+import {strictEqual} from "assert";
+
+describe("some category", () => {
+  describe("some other category", () => {
+    before(async () => {
+
+    });
+    after(() => {
+
+    });
+    setTestTimeout(10000);
+    setIsolate(true); // this will run "some test" in it's own node process
+    it("some test", async () => {
+        strictEqual(true, false, "todo empty test");
+    });
+  });
+  it("some other test", async () => {
+
+  });
+})
+```
 
 recursive run ```*.test.js``` files
 
-```npx miqro test -r test/```
+```npx miqro-test test -r test/```
 
 run test files
 
-```npx miqro test test/*.test.js```
+```npx miqro-test test/*.test.js```
 
 run test isolated into its own node process
 
-```npx miqro test test/*.test.js -i```
+```npx miqro-test test/*.test.js -i```
 
 run test named tests
 
-```npx miqro test test/*.test.js -n "testname"```
+```npx miqro-test test/*.test.js -n "testname"```
