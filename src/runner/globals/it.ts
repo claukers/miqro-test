@@ -6,7 +6,7 @@ import {fork} from "child_process";
 import {assertNotRunning, DEFAULT_TIMEOUT, getGlobalTestOptions, pushTest} from "../common";
 import {ItFunction, TestFunction, TestOption} from "../types";
 
-export const it: ItFunction = (title: string, impl: TestFunction, options?: TestOption, logger: {
+export const it: ItFunction = (title: string, testFunction: TestFunction, options?: TestOption, logger: {
   log: (...args: any[]) => void
 } | Console = new Console(process.stdout)): void => {
   assertNotRunning();
@@ -55,7 +55,7 @@ export const it: ItFunction = (title: string, impl: TestFunction, options?: Test
               await options.before();
             }
             const startMS = Date.now();
-            await impl();
+            await testFunction();
             const took = Date.now() - startMS;
             if (options && options.after) {
               await options.after();

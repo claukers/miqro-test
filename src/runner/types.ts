@@ -17,7 +17,7 @@ export type AfterFunction = (after: TestFunction) => void;
 
 export type DescribeFunction = (title: string, impl: () => void) => void;
 
-export type ItFunction = (title: string, impl: TestFunction, options?: TestOption, logger?: {
+export type ItFunction = (title: string, testFunction: TestFunction, options?: TestOption, logger?: {
   log: (...args: any[]) => void
 } | Console) => void;
 

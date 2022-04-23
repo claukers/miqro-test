@@ -2,42 +2,6 @@
 
 ```npm install @miqro/test --save-dev```
 
-## test helper for RequestListener
-
-```typescript
-import {TestHelper} from "@miqro/test";
-import {RequestListener} from "http";
-
-const listener: RequestListener = (req, res) => {
-  // server code
-};
-
-const response = await TestHelper({
-  listener
-}, {
-  url: ...,
-  method: ...,
-  ...
-})
-```
-
-## fake function
-
-```typescript
-import {fake} from "@miqro/test";
-
-const cb = fake(() => {
-  return 1;
-})
-
-strictEqual(cb(), 1);
-strictEqual(cb.callCount, 1);
-strictEqual(cb.callArgs[0].length, 0);
-strictEqual(cb.returnValues[0], 1);
-
-// cb.reset(); // resets callCount, callArgs and returnValues
-```
-
 ## require mock
 
 ### example
@@ -87,6 +51,23 @@ import {clearRequireCache} from "@miqro/test";
 import {resolve} from "path";
 
 clearRequireCache(resolve(__dirname, "src/"));
+```
+
+## fake function
+
+```typescript
+import {fake} from "@miqro/test";
+
+const cb = fake(() => {
+  return 1;
+})
+
+strictEqual(cb(), 1);
+strictEqual(cb.callCount, 1);
+strictEqual(cb.callArgs[0].length, 0);
+strictEqual(cb.returnValues[0], 1);
+
+// cb.reset(); // resets callCount, callArgs and returnValues
 ```
 
 ## test runner
