@@ -74,6 +74,8 @@ strictEqual(cb.returnValues[0], 1);
 
 ```npm install @miqro/test --save-dev```
 
+### example
+
 ```example.test.js```
 
 ```typescript
@@ -98,6 +100,8 @@ describe("some category", () => {
   });
 })
 ```
+
+### cli arguments
 
 recursive run ```*.test.js``` files
 
