@@ -91,7 +91,7 @@ const main = async (): Promise<void> => {
         hasValue: false
       },
       r: {
-        description: "recursive. cannot be used with files",
+        description: "recursive.",
         hasValue: true
       }
     }
@@ -103,11 +103,12 @@ const main = async (): Promise<void> => {
 
   if (args.files.length === 0 && !recursive) {
     throw new Error(`bad arguments`);
-  } else if (recursive && args.files.length > 0) {
-    throw new Error(`cannot use recursive with files`);
   }
 
-  const modules = recursive ? getModulesRecursive(recursive.map(r => resolve(process.cwd(), r))) : args.files.map(m => resolve(process.cwd(), m));
+  let modules = args.files.map(m => resolve(process.cwd(), m));
+  if (recursive) {
+    modules = modules.concat(getModulesRecursive(recursive.map(r => resolve(process.cwd(), r))));
+  }
 
   const name = args.flags.n ? args.flags.n as string[] : "all";
   const exact = args.flags.exact !== undefined ? true : false;
