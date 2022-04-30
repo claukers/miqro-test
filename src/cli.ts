@@ -32,7 +32,7 @@ const extractFlags = (args: string[], options?: {
     }
   }
 }): { flags: { [key: string]: string | (string | null)[] | null }; files: string[]; } => {
-  const flags: { [key: string]: string | (string | null)[] | null } = {};
+  const flags: { [key: string]: string | (string | null)[] | null } = Object.create(null);
   const files: string[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
