@@ -69,13 +69,15 @@ export const it: ItFunction = (title: string, testFunction: TestFunction, option
             resolve();
           }).catch(e => {
             clearTimeout(timeout);
-            reject(new Error(format("%s failed\n%s finished with errors %o", fullName, fullName, e)));
+            //reject(new Error(format("%s failed\n%s finished with errors %o", fullName, fullName, e)));
+            reject(e);
           });
         }
 
       } catch (e) {
         clearTimeout(timeout);
-        reject(new Error(format("%s failed\n%s finished with errors %o", fullName, fullName, e)));
+        reject(e);
+        // reject(new Error(format("%s failed\n%s finished with errors %o", fullName, fullName, e)));
       }
     }), title,
     category,
