@@ -15,7 +15,7 @@ function getModulesRecursive(path: string[] | string, ret: string[] = []) {
         getModulesRecursive(resolve(path, file), ret);
       } else {
         const split = file.split(".").reverse();
-        if (split.length >= 3 && split[0] === "js" && split[1] === "test") {
+        if (split.length >= 3 && (split[0] === "js" || split[0] === "cjs") && split[1] === "test") {
           ret.push(resolve(path, file));
         }
       }
