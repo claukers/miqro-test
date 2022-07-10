@@ -1,6 +1,6 @@
-import {it, after, before, describe, setIsolate, setTestTimeout} from "./globals";
-import {Console} from "console";
-import {Test, TestOption} from "./types";
+import { it, after, before, describe, setIsolate, setTestTimeout } from "./globals";
+import { Console } from "console";
+import { Test, TestOption } from "./types";
 
 let runningTests = false;
 
@@ -82,7 +82,8 @@ export async function runTests(title?: string | string[], logger: {
             await test.run(disableIsolate, disableLogging, isolateDefault);
             ret.passed++;
           } catch (e) {
-            logger.error("\x1b[31m%s\x1b[0m", e);
+            logger.error(e);
+            logger.error("\x1b[31m%s failed %s\x1b[0m", test.fullName, e);
             ret.failed.push({
               error: e,
               fullName: test.fullName
