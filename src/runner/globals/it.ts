@@ -1,16 +1,16 @@
-import {Console} from "console";
-import {getCallerFilePath} from "../../common";
-import {format} from "util";
-import {resolve as pathResolve} from "path";
-import {fork} from "child_process";
-import {assertNotRunning, DEFAULT_TIMEOUT, getGlobalTestOptions, pushTest} from "../common";
-import {ItFunction, TestFunction, TestOption} from "../types";
+import { Console } from "console";
+import { getCallerFilePath } from "../../common";
+import { format } from "util";
+import { resolve as pathResolve } from "path";
+import { fork } from "child_process";
+import { assertNotRunning, DEFAULT_TIMEOUT, getGlobalTestOptions, pushTest } from "../common";
+import { ItFunction, TestFunction, TestOption } from "../types";
 
 export const it: ItFunction = (title: string, testFunction: TestFunction, options?: TestOption, logger: {
   log: (...args: any[]) => void
 } | Console = new Console(process.stdout)): void => {
   assertNotRunning();
-  options = options ? {...getGlobalTestOptions(), ...options} : {...getGlobalTestOptions()};
+  options = options ? { ...getGlobalTestOptions(), ...options } : { ...getGlobalTestOptions() };
   const category = options && options.category ? options.category : undefined;
   const fullName = `${category ? `${category} [` : ""}${title}${category ? "]" : ""}`;
   const testFilePath = getCallerFilePath();
@@ -35,6 +35,10 @@ export const it: ItFunction = (title: string, testFunction: TestFunction, option
             execArgv,
             env: process.env,
             detached: false
+          });
+          cp.on("error", (err) => {
+            clearTimeout(timeout);
+            reject(new Error(format("%s failed\n%s finished", fullName, fullName)));
           });
           cp.on("close", (code) => {
             const took = Date.now() - startMS;
