@@ -38,7 +38,7 @@ export const it: ItFunction = (title: string, testFunction: TestFunction, option
           });
           cp.on("error", (err) => {
             clearTimeout(timeout);
-            reject(new Error(format("%s failed\n%s finished", fullName, fullName)));
+            reject(err);
           });
           cp.on("close", (code) => {
             const took = Date.now() - startMS;
