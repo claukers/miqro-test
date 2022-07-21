@@ -4,6 +4,13 @@
 
 ## require mock
 
+```function requireMock(path, mocks, [wipeCache], [clearCache]): any```
+
+- path: string path to the module file
+- mocks: object where the keys are the mocks path relative to the module file and as a value the module implementation.
+- wipeCache: string path that clears the require.cache before mocking
+- clearCache: boolean to clear require.cache the changes made before importing the module. 
+
 ### example
 
 ```lib.js```
