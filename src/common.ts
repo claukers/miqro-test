@@ -57,9 +57,9 @@ export function clearRequireCache(path: string): void {
 
 export function requireMock(requirePath: string, mocks: {
   [path: string]: any
-}, cacheWipePath?: string) {
+}, cacheWipePath?: string, clearMocks = true) {
   const callerPath = getCallerFilePath();
-  if (cacheWipePath) {
+  if (cacheWipePath !== undefined) {
     clearRequireCache(resolve(dirname(callerPath), cacheWipePath));
   }
   const resolvedRequirePath = resolve(dirname(callerPath), requirePath);
@@ -83,12 +83,12 @@ export function requireMock(requirePath: string, mocks: {
     resolvedPaths.push(resolvedPath);
   }
   const mod = require(resolvedRequirePath);
+  if (clearMocks !== undefined && clearMocks === true) {
+    for (const path of resolvedPaths) {
+      delete require.cache[path];
+    }
 
-  for (const path of resolvedPaths) {
-    delete require.cache[path];
+    delete require.cache[resolvedRequirePath];
   }
-
-  delete require.cache[resolvedRequirePath];
-
   return mod;
 }
